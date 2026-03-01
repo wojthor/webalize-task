@@ -69,6 +69,11 @@ export interface Config {
   collections: {
     users: User
     media: Media
+    categories: Category
+    posts: Post
+    faq: Faq
+    integrations: Integration
+    'contact-submissions': ContactSubmission
     'payload-kv': PayloadKv
     'payload-locked-documents': PayloadLockedDocument
     'payload-preferences': PayloadPreference
@@ -78,6 +83,13 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>
     media: MediaSelect<false> | MediaSelect<true>
+    categories: CategoriesSelect<false> | CategoriesSelect<true>
+    posts: PostsSelect<false> | PostsSelect<true>
+    faq: FaqSelect<false> | FaqSelect<true>
+    integrations: IntegrationsSelect<false> | IntegrationsSelect<true>
+    'contact-submissions':
+      | ContactSubmissionsSelect<false>
+      | ContactSubmissionsSelect<true>
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
     'payload-locked-documents':
       | PayloadLockedDocumentsSelect<false>
@@ -92,10 +104,19 @@ export interface Config {
   db: {
     defaultIDType: number
   }
-  fallbackLocale: null
-  globals: {}
-  globalsSelect: {}
-  locale: null
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('pl' | 'en')
+    | ('pl' | 'en')[]
+  globals: {
+    footer: Footer
+  }
+  globalsSelect: {
+    footer: FooterSelect<false> | FooterSelect<true>
+  }
+  locale: 'pl' | 'en'
   widgets: {
     collections: CollectionsWidget
   }
@@ -169,6 +190,81 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number
+  title: string
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number
+  title: string
+  slug: string
+  coverImage?: (number | null) | Media
+  excerpt?: string | null
+  content?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  category?: (number | null) | Category
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number
+  question: string
+  answer: string
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations".
+ */
+export interface Integration {
+  id: number
+  name: string
+  logo?: (number | null) | Media
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * Read-only list of contact form submissions.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number
+  name?: string | null
+  email: string
+  message?: string | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -198,6 +294,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media'
         value: number | Media
+      } | null)
+    | ({
+        relationTo: 'categories'
+        value: number | Category
+      } | null)
+    | ({
+        relationTo: 'posts'
+        value: number | Post
+      } | null)
+    | ({
+        relationTo: 'faq'
+        value: number | Faq
+      } | null)
+    | ({
+        relationTo: 'integrations'
+        value: number | Integration
+      } | null)
+    | ({
+        relationTo: 'contact-submissions'
+        value: number | ContactSubmission
       } | null)
   globalSlug?: string | null
   user: {
@@ -283,6 +399,60 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  coverImage?: T
+  excerpt?: T
+  content?: T
+  category?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T
+  answer?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations_select".
+ */
+export interface IntegrationsSelect<T extends boolean = true> {
+  name?: T
+  logo?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T
+  email?: T
+  message?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -320,6 +490,28 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T
   updatedAt?: T
   createdAt?: T
+}
+/**
+ * Footer content shown across the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number
+  copyrightText?: string | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  copyrightText?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
