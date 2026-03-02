@@ -47,6 +47,9 @@ export default async function LocaleLayout({
             <li>
               <a href={`/${locale}/faq`}>{t.faq}</a>
             </li>
+            <li>
+              <a href={`/${locale}/integrations`}>{t.integrations}</a>
+            </li>
           </ul>
         </nav>
         <main>{children}</main>

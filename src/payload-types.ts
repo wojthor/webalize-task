@@ -71,7 +71,9 @@ export interface Config {
     media: Media
     categories: Category
     posts: Post
+    'faq-categories': FaqCategory
     faq: Faq
+    'integration-categories': IntegrationCategory
     integrations: Integration
     'contact-submissions': ContactSubmission
     'payload-kv': PayloadKv
@@ -85,7 +87,11 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>
     categories: CategoriesSelect<false> | CategoriesSelect<true>
     posts: PostsSelect<false> | PostsSelect<true>
+    'faq-categories': FaqCategoriesSelect<false> | FaqCategoriesSelect<true>
     faq: FaqSelect<false> | FaqSelect<true>
+    'integration-categories':
+      | IntegrationCategoriesSelect<false>
+      | IntegrationCategoriesSelect<true>
     integrations: IntegrationsSelect<false> | IntegrationsSelect<true>
     'contact-submissions':
       | ContactSubmissionsSelect<false>
@@ -194,7 +200,7 @@ export interface Media {
  */
 export interface Category {
   id: number
-  title: string
+  name: string
   updatedAt: string
   createdAt: string
 }
@@ -206,7 +212,6 @@ export interface Post {
   id: number
   title: string
   slug: string
-  coverImage?: (number | null) | Media
   excerpt?: string | null
   content?: {
     root: {
@@ -223,7 +228,20 @@ export interface Post {
     }
     [k: string]: unknown
   } | null
+  image?: (number | null) | Media
+  publishedDate?: string | null
+  readTime?: string | null
   category?: (number | null) | Category
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories".
+ */
+export interface FaqCategory {
+  id: number
+  name: string
   updatedAt: string
   createdAt: string
 }
@@ -234,7 +252,32 @@ export interface Post {
 export interface Faq {
   id: number
   question: string
-  answer: string
+  answer: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
+  category?: (number | null) | FaqCategory
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integration-categories".
+ */
+export interface IntegrationCategory {
+  id: number
+  name: string
   updatedAt: string
   createdAt: string
 }
@@ -245,7 +288,9 @@ export interface Faq {
 export interface Integration {
   id: number
   name: string
+  description?: string | null
   logo?: (number | null) | Media
+  category?: (number | null) | IntegrationCategory
   updatedAt: string
   createdAt: string
 }
@@ -257,9 +302,13 @@ export interface Integration {
  */
 export interface ContactSubmission {
   id: number
-  name?: string | null
+  fullName?: string | null
   email: string
-  message?: string | null
+  companyName?: string | null
+  phoneNumber?: string | null
+  phonePrefix?: string | null
+  preferredTime?: string | null
+  privacyPolicyAccepted?: boolean | null
   updatedAt: string
   createdAt: string
 }
@@ -304,8 +353,16 @@ export interface PayloadLockedDocument {
         value: number | Post
       } | null)
     | ({
+        relationTo: 'faq-categories'
+        value: number | FaqCategory
+      } | null)
+    | ({
         relationTo: 'faq'
         value: number | Faq
+      } | null)
+    | ({
+        relationTo: 'integration-categories'
+        value: number | IntegrationCategory
       } | null)
     | ({
         relationTo: 'integrations'
@@ -402,7 +459,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  title?: T
+  name?: T
   updatedAt?: T
   createdAt?: T
 }
@@ -413,10 +470,21 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T
   slug?: T
-  coverImage?: T
   excerpt?: T
   content?: T
+  image?: T
+  publishedDate?: T
+  readTime?: T
   category?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories_select".
+ */
+export interface FaqCategoriesSelect<T extends boolean = true> {
+  name?: T
   updatedAt?: T
   createdAt?: T
 }
@@ -427,6 +495,16 @@ export interface PostsSelect<T extends boolean = true> {
 export interface FaqSelect<T extends boolean = true> {
   question?: T
   answer?: T
+  category?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integration-categories_select".
+ */
+export interface IntegrationCategoriesSelect<T extends boolean = true> {
+  name?: T
   updatedAt?: T
   createdAt?: T
 }
@@ -436,7 +514,9 @@ export interface FaqSelect<T extends boolean = true> {
  */
 export interface IntegrationsSelect<T extends boolean = true> {
   name?: T
+  description?: T
   logo?: T
+  category?: T
   updatedAt?: T
   createdAt?: T
 }
@@ -445,9 +525,13 @@ export interface IntegrationsSelect<T extends boolean = true> {
  * via the `definition` "contact-submissions_select".
  */
 export interface ContactSubmissionsSelect<T extends boolean = true> {
-  name?: T
+  fullName?: T
   email?: T
-  message?: T
+  companyName?: T
+  phoneNumber?: T
+  phonePrefix?: T
+  preferredTime?: T
+  privacyPolicyAccepted?: T
   updatedAt?: T
   createdAt?: T
 }

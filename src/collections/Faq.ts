@@ -4,7 +4,7 @@ export const Faq: CollectionConfig = {
   slug: 'faq',
   admin: {
     useAsTitle: 'question',
-    defaultColumns: ['question', 'updatedAt'],
+    defaultColumns: ['question', 'category', 'updatedAt'],
   },
   fields: [
     {
@@ -15,9 +15,15 @@ export const Faq: CollectionConfig = {
     },
     {
       name: 'answer',
-      type: 'textarea',
+      type: 'richText',
       required: true,
       localized: true,
+    },
+    {
+      name: 'category',
+      type: 'relationship',
+      relationTo: 'faq-categories',
+      hasMany: false,
     },
   ],
 }

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
-export const Categories: CollectionConfig = {
-  slug: 'categories',
+export const FaqCategories: CollectionConfig = {
+  slug: 'faq-categories',
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name'],

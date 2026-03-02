@@ -36,24 +36,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     depth: 1,
   })
 
-  const coverImage =
-    post.coverImage && typeof post.coverImage === 'object'
-      ? post.coverImage
-      : null
+  const image = post.image && typeof post.image === 'object' ? post.image : null
+  const category =
+    post.category && typeof post.category === 'object' ? post.category : null
 
   return (
-    <>
+    <article>
       <h1>{post.title}</h1>
-      {coverImage?.url && (
-        <img src={coverImage.url} alt={coverImage.alt ?? post.title} />
+      {image?.url && <img src={image.url} alt={image.alt ?? post.title} />}
+      {post.publishedDate && (
+        <p>
+          <time dateTime={new Date(post.publishedDate).toISOString()}>
+            {new Date(post.publishedDate).toLocaleDateString(locale)}
+          </time>
+        </p>
       )}
-      <p>Locale: {locale}</p>
+      {post.readTime && <p>{post.readTime}</p>}
+      {category && 'name' in category && (
+        <p>{String((category as { name?: string }).name)}</p>
+      )}
       {post.excerpt && <p>{post.excerpt}</p>}
       {post.content && (
-        <div>
-          <p>Content (richText): present in payload</p>
-        </div>
+        <section>
+          <p>Content (richText)</p>
+        </section>
       )}
-    </>
+    </article>
   )
 }

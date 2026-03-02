@@ -4,13 +4,14 @@ import React from 'react'
 import config from '@payload-config'
 import { getDictionary } from '@/dictionaries'
 import { isValidLocale, type Locale } from '@/i18n/locales'
-import { lexicalToPlainText } from '@/utils/lexicalToText'
 
-type FaqPageProps = {
+type IntegrationsPageProps = {
   params: Promise<{ locale: Locale }>
 }
 
-export default async function FaqPage({ params }: FaqPageProps) {
+export default async function IntegrationsPage({
+  params,
+}: IntegrationsPageProps) {
   const { locale } = await params
   if (!isValidLocale(locale)) notFound()
   const t = getDictionary(locale)
@@ -18,22 +19,22 @@ export default async function FaqPage({ params }: FaqPageProps) {
   const payload = await getPayload({ config: payloadConfig })
 
   const { docs: categories } = await payload.find({
-    collection: 'faq-categories',
+    collection: 'integration-categories',
     locale,
     depth: 0,
     sort: '-createdAt',
   })
 
-  const { docs: faqs } = await payload.find({
-    collection: 'faq',
+  const { docs: integrations } = await payload.find({
+    collection: 'integrations',
     locale,
     depth: 1,
   })
 
-  const byCategory = new Map<number, typeof faqs>()
-  const uncategorized: typeof faqs = []
+  const byCategory = new Map<number, typeof integrations>()
+  const uncategorized: typeof integrations = []
 
-  for (const item of faqs) {
+  for (const item of integrations) {
     const catId =
       typeof item.category === 'object' && item.category !== null
         ? (item.category as { id: number }).id
@@ -49,7 +50,7 @@ export default async function FaqPage({ params }: FaqPageProps) {
 
   return (
     <>
-      <h1>{t.faq}</h1>
+      <h1>{t.integrations}</h1>
       {categories.map((cat) => {
         const items = byCategory.get(cat.id) ?? []
         return (
@@ -57,13 +58,17 @@ export default async function FaqPage({ params }: FaqPageProps) {
             <h2>{cat.name}</h2>
             <ul>
               {items.map((item) => {
-                const answerText = item.answer
-                  ? lexicalToPlainText(item.answer)
-                  : ''
+                const logo =
+                  item.logo && typeof item.logo === 'object' ? item.logo : null
                 return (
                   <li key={item.id}>
-                    <h3>{item.question}</h3>
-                    {answerText !== '' && <p>{answerText}</p>}
+                    <article>
+                      {logo?.url && (
+                        <img src={logo.url} alt={logo.alt ?? item.name ?? ''} />
+                      )}
+                      <h3>{item.name}</h3>
+                      {item.description && <p>{item.description}</p>}
+                    </article>
                   </li>
                 )
               })}
@@ -76,13 +81,17 @@ export default async function FaqPage({ params }: FaqPageProps) {
           <h2>Uncategorized</h2>
           <ul>
             {uncategorized.map((item) => {
-              const answerText = item.answer
-                ? lexicalToPlainText(item.answer)
-                : ''
+              const logo =
+                item.logo && typeof item.logo === 'object' ? item.logo : null
               return (
                 <li key={item.id}>
-                  <h3>{item.question}</h3>
-                  {answerText !== '' && <p>{answerText}</p>}
+                  <article>
+                    {logo?.url && (
+                      <img src={logo.url} alt={logo.alt ?? item.name ?? ''} />
+                    )}
+                    <h3>{item.name}</h3>
+                    {item.description && <p>{item.description}</p>}
+                  </article>
                 </li>
               )
             })}

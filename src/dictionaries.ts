@@ -2,17 +2,19 @@ import type { Locale } from '@/i18n/locales'
 
 export const dictionaries: Record<
   Locale,
-  { home: string; blog: string; faq: string }
+  { home: string; blog: string; faq: string; integrations: string }
 > = {
   en: {
     home: 'Home',
     blog: 'Blog',
     faq: 'FAQ',
+    integrations: 'Integrations',
   },
   pl: {
     home: 'Strona Główna',
-    blog: 'Aktualności',
+    blog: 'Blog',
     faq: 'Częste Pytania',
+    integrations: 'Integracje',
   },
 }
 

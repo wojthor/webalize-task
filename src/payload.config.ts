@@ -9,7 +9,9 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Categories } from './collections/Categories'
 import { Posts } from './collections/Posts'
+import { FaqCategories } from './collections/FaqCategories'
 import { Faq } from './collections/Faq'
+import { IntegrationCategories } from './collections/IntegrationCategories'
 import { Integrations } from './collections/Integrations'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Footer } from './globals/Footer'
@@ -29,7 +31,9 @@ export default buildConfig({
     Media,
     Categories,
     Posts,
+    FaqCategories,
     Faq,
+    IntegrationCategories,
     Integrations,
     ContactSubmissions,
   ],
@@ -51,7 +55,6 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URL || '',
     },
-    push: false,
   }),
   sharp,
   plugins: [],

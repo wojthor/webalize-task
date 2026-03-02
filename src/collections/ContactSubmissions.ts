@@ -4,7 +4,7 @@ export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
   admin: {
     useAsTitle: 'email',
-    defaultColumns: ['name', 'email', 'createdAt'],
+    defaultColumns: ['fullName', 'email', 'companyName', 'createdAt'],
     description: 'Read-only list of contact form submissions.',
   },
   access: {
@@ -15,7 +15,7 @@ export const ContactSubmissions: CollectionConfig = {
   },
   fields: [
     {
-      name: 'name',
+      name: 'fullName',
       type: 'text',
     },
     {
@@ -24,8 +24,30 @@ export const ContactSubmissions: CollectionConfig = {
       required: true,
     },
     {
-      name: 'message',
-      type: 'textarea',
+      name: 'companyName',
+      type: 'text',
+    },
+    {
+      name: 'phoneNumber',
+      type: 'text',
+    },
+    {
+      name: 'phonePrefix',
+      type: 'text',
+    },
+    {
+      name: 'preferredTime',
+      type: 'date',
+      admin: {
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+      },
+    },
+    {
+      name: 'privacyPolicyAccepted',
+      type: 'checkbox',
+      defaultValue: false,
     },
   ],
 }
